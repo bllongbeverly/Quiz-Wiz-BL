@@ -30,6 +30,7 @@ var questions = [
 var currentQuestion = 0;
 var score = 0;
 var timerInterval;
+var timeLeft = 60;
 
   // Get elements from HTML
 var startBtn = document.querySelector("#start-btn");
@@ -57,9 +58,6 @@ startBtn.addEventListener("click", startQuiz)
 
     // Display the first question
     displayQuestion();
-
-    // Set the time left to 60 seconds
-    var timeLeft = 60;
 
     // Display the initial time
     document.querySelector(".timer-count").textContent = timeLeft;
@@ -95,14 +93,24 @@ function displayQuestion() {
         var choice = questions[currentQuestion].choices[i];
         var choiceElement = document.createElement("button");
         choiceElement.textContent = choice;
-        choiceElement.setAttribute("class", "choices");
+        choiceElement.setAttribute("class", "choice");
         choicesElement.appendChild(choiceElement);
 
         // Add an event listener to each answer button
-        choiceElement.addEventListener("click", function() {
+        choiceElement.addEventListener("click", checkAnswer) }
+
+        function checkAnswer(event){ 
+
+            var answerCheck = event.target 
             // Check if the answer is correct and increment the score if it is
-            if (choice === questions[currentQuestion].answer) {
+            if (answerCheck.innerText === questions[currentQuestion].answer) {
                 score++;
+                console.log(score);
+            }
+            if (answerCheck.innerText != questions[currentQuestion].answer) {
+                timeLeft -= 15;
+                console.log(answerCheck.innerText);
+                console.log(questions[currentQuestion].answer);
             }
 
             // Move on to the next question
@@ -116,26 +124,23 @@ function displayQuestion() {
                 // If there aren't, end the quiz
                 endQuiz();
             }
-        });
+        };
     }
-}
-
 
 function endQuiz() {
-    // Stop the timer
-    clearInterval(timerInterval);
-  
-    // Hide the quiz container
-    quizContainer.style.display = "none";
-  
-    // Show the results container
-    resultsContainer.style.display = "block";
-  
+    // Hide the quiz section
+    var quizElement = document.getElementById("quiz");
+    if (quizElement) {
+        quizElement.style.display = "none";
+    }
+
+    // Display the results section
+    var resultsElement = document.getElementById("results-container");
+    resultsElement.style.display = "block";
+
     // Display the score
-    scoreElement.textContent = score + "/" + questions.length;
-    // Display the quiz results
-    var quizResults = document.getElementById("results-container");
-    quizResults.style.display = "block";
-    quizResults.textContent = "You scored " + score + " out of " + questions.length + ".";
-  }
-   
+    var scoreElement = document.getElementById("game-over");
+    scoreElement.textContent = "Your score: " + score;
+
+    
+}
